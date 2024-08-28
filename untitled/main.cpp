@@ -6,8 +6,18 @@ struct Node
 {
     int data;
     Node* next;
-    Node(int val) : data(val), next(nullptr) {}
+    Node(int val) : data(val), next(nullptr) {};
+    Node(int val, Node* siguiente) : data(val), next(siguiente) {};
 };
+
+struct ListNode
+{
+    int data;
+    ListNode* next;
+    ListNode(int val) : data(val), next(nullptr) {};
+    ListNode(int val, ListNode* siguiente) : data(val), next(siguiente) {};
+};
+
 class List {
 
 public:
@@ -15,6 +25,8 @@ public:
     ~List() {
         clear();
     }
+    Node* headshow(){return head;};
+    void headset(Node* newhead){head=newhead;};
     void display();
     void pushfront(int num);
     void pushback(int num);
@@ -130,7 +142,9 @@ int List::Nnume(int pos) {
     return temp->data;
 };
 bool List::empty(){
-    return head == nullptr;
+    if (head == NULL)
+        return true;
+    return false;
 };
 int List::find(int num) {
     Node* temp = head;
@@ -143,26 +157,52 @@ int List::find(int num) {
     return count;
 };
 
-void List::remove(int num) {
+
+//AQUIIIIIIIIIII
+//AQUIIIIIIIIIII
+//AQUIIIIIIIIIII
+//AQUIIIIIIIIIII
+//AQUIIIIIIIIIII
+//AQUIIIIIIIIIII
+//AQUIIIIIIIIIII
+
+void List::remove(int val) {
     Node* temp1 = head;
-    Node* temp2 ;
-    while (head != NULL && head->data == num) {
-        Node* temp = head;
-        head = head->next;
-        delete temp;
+    if(temp1==NULL){
+        return;
     }
-    while (temp1 != NULL && temp1->next != NULL) {
-        if (temp1->next->data == num) {
-            temp2 = temp1->next;
-            temp1->next = temp1->next->next;
-            delete temp2;
-        } else {
+    Node* temp2 = temp1->next;
+    while(temp1->data==val && temp2 != NULL){
+        head=head->next;
+        delete temp1;
+        temp1=head;
+        temp2 = temp1->next;
+    }
+
+    while (temp2 != NULL) {
+        if (temp2->data == val){
+            Node* temp3 = temp2;
+            temp2 = temp2->next;
+            temp1->next=temp2;
+            delete temp3;}
+        else {
             temp1 = temp1->next;
+            temp2 = temp2->next;
         }
+    }
+
+    if(head->data== val){
+        temp1=head;
+        head= nullptr;
+        delete temp1;
     }
 };
 
-
+//AQUIIIIIIIIIII
+//AQUIIIIIIIIIII
+//AQUIIIIIIIIIII
+//AQUIIIIIIIIIII
+//AQUIIIIIIIIIII
 void List::reverse() {
     Node* temp = head;
     Node* temp2 = temp->next;
@@ -233,25 +273,92 @@ List merge(List& l1, List& l2) {
     return result;
 }
 
+Node* remove(int num, Node* cabeza) {
+    Node* temp1 = cabeza;
+    Node* temp2 = temp1->next;
+
+    while(temp1->data==num && temp2 != NULL){
+        cabeza=cabeza->next;
+        delete temp1;
+        temp1=cabeza;
+        temp2 = temp1->next;
+    }
+
+    while (temp2 != NULL) {
+        if (temp2->data == num){
+            Node* temp3 = temp2;
+            temp2 = temp2->next;
+            temp1->next=temp2;
+            delete temp3;}
+        else {
+            temp1 = temp1->next;
+            temp2 = temp2->next;
+        }
+    }
+
+    if(cabeza->data== num){
+        temp1=cabeza;
+        cabeza= nullptr;
+        delete temp1;
+    }
+};
+
+class Solution {
+public:
+    ListNode* removeElements(ListNode* head, int val) {
+        ListNode* temp1 = head;
+        if(temp1==NULL){
+            return head;
+        }
+        ListNode* temp2 = temp1->next;
+        while(temp1->data==val && temp2 != NULL){
+            head=head->next;
+            delete temp1;
+            temp1=head;
+            temp2 = temp1->next;
+        }
+
+        while (temp2 != NULL) {
+            if (temp2->data == val){
+                ListNode* temp3 = temp2;
+                temp2 = temp2->next;
+                temp1->next=temp2;
+                delete temp3;}
+            else {
+                temp1 = temp1->next;
+                temp2 = temp2->next;
+            }
+        }
+
+        if(head->data== val){
+            temp1=head;
+            head= nullptr;
+            delete temp1;
+        }
+        return head;
+    }
+};
+
 int main() {
     List Pruebas;
-    List Pruebas3;
-    List Combinado;
-    Pruebas.pushfront(2);
-    Pruebas.pushfront(1);
+    Solution testing;
+    Pruebas.pushfront(5);
     Pruebas.pushfront(4);
-    Pruebas.pushfront(3);
-    Pruebas.sort();
+    Pruebas.pushfront(6);
+    Pruebas.pushfront(4);
+    Pruebas.pushfront(4);
+    Pruebas.pushfront(4);
+    //testing.removeElements(Pruebas.headshow(), 4);
+
+    /*
+    Node ulti(3);
+    Node terce(4, &ulti);
+    Node segu(4, &terce);
+    Node prime(2, &segu);
+    Node* ver=remove(7, &prime);
+    Pruebas.headset(ver);
+     */
     Pruebas.display();
-    cout << endl;
-    Pruebas3.pushfront(5);
-    Pruebas3.pushfront(8);
-    Pruebas3.pushfront(6);
-    Pruebas3.pushfront(7);
-    Pruebas3.sort();
-    Pruebas3.display();
-    cout << endl;
-    Combinado=merge(Pruebas3,Pruebas);
-    Combinado.display();
+
     return 0;
 }
