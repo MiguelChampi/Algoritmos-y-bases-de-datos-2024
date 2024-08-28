@@ -6,15 +6,20 @@ struct Node
 {
     int data;
     Node* next;
+    Node(int val) : data(val), next(nullptr) {}
 };
-
 class List {
+
 public:
+    List():head(NULL){};
+    ~List() {
+        clear();
+    }
     void display();
     void pushfront(int num);
     void pushback(int num);
-    void popfront();
-    void popback();
+    int popfront();
+    int popback();
     void insert(int num, int pos);
     void clear();
     int front();
@@ -37,30 +42,38 @@ void List::display() {
         cout << temp->data << " ";
         temp = temp->next;
     }
+    cout << endl;
 };
 void List::pushfront(int num) {
-    Node* pushing = new Node;
-    pushing->data = num;
+    Node* pushing = new Node(num);
     pushing->next = head;
     head = pushing;
 };
 void List::pushback(int num) {
-    Node* pushing = new Node;
-    pushing->data = 5;
-    Node* temp = head;
-    while (temp->next !=NULL)
-        temp = temp->next;
-    temp->next = pushing;
-    pushing->next = NULL;
+    Node* newNode = new Node(num);
+    if (!head) {
+        head = newNode;
+    } else {
+        Node* current = head;
+        while (current->next) {
+            current = current->next;
+        }
+        current->next = newNode;
+    }
 };
-void List::popfront() {
+int List::popfront() {
+    int aux;
     Node* temp = head;
+    aux=temp->data;
     head = head->next;
     delete temp;
+    return aux;
 };
-void List::popback() {
+int List::popback() {
+    int aux;
     if(head->next == NULL)
     {
+        aux=head->data;
         delete head;
         head = NULL;
     }
@@ -68,9 +81,11 @@ void List::popback() {
         Node* temp = head;
         while(temp->next->next != NULL)
             temp = temp->next;
+        aux=temp->data;
         delete temp->next;
         temp->next = NULL;
     }
+    return aux;
 };
 void List::insert(int num, int pos) {
     Node* nodo = new Node(num);
@@ -114,11 +129,8 @@ int List::Nnume(int pos) {
     while(i++ < pos - 1) temp = temp->next;
     return temp->data;
 };
-bool List::empty() {
-    if(head == NULL)
-        return true;
-    else
-        return false;
+bool List::empty(){
+    return head == nullptr;
 };
 int List::find(int num) {
     Node* temp = head;
@@ -131,20 +143,21 @@ int List::find(int num) {
     return count;
 };
 
-// NO ENCUENTRA EL DEL PRIMER VALOR, VERIFICAR COMO HACERLO
 void List::remove(int num) {
     Node* temp1 = head;
-    Node* temp2 = temp1->next;
-    Node* temp3;
-    while (temp2 != NULL) {
-        if (temp2->data == num){
-            temp3 = temp2;
-            temp2 = temp2->next;
-            temp1->next=temp2;
-            delete temp3;}
-        else {
+    Node* temp2 ;
+    while (head != NULL && head->data == num) {
+        Node* temp = head;
+        head = head->next;
+        delete temp;
+    }
+    while (temp1 != NULL && temp1->next != NULL) {
+        if (temp1->next->data == num) {
+            temp2 = temp1->next;
+            temp1->next = temp1->next->next;
+            delete temp2;
+        } else {
             temp1 = temp1->next;
-            temp2 = temp2->next;
         }
     }
 };
@@ -165,50 +178,80 @@ void List::reverse() {
 };
 
 void List::sort() {
+    if (head == NULL || head->next == NULL) {
+        return;
+    }
     Node* sorted = NULL;
-    Node* temp = head;
-    while (temp != NULL) {
-        Node* next = temp->next;
-        if (sorted == NULL || sorted->data >= temp->data) {
-            temp->next = sorted;
-            sorted = temp;
+    Node* current = head;
+    while (current != NULL) {
+        Node* next = current->next;
+        if (sorted == NULL || sorted->data >= current->data) {
+            current->next = sorted;
+            sorted = current;
         } else {
             Node* temp = sorted;
-            while (temp->next != NULL && temp->next->data < temp->data) {
+            while (temp->next != NULL && temp->next->data < current->data) {
                 temp = temp->next;
             }
-            temp->next = temp->next;
-            temp->next = temp;
+            current->next = temp->next;
+            temp->next = current;
         }
-        temp = next;
+        current = next;
     }
     head = sorted;
-};//Use insertion sort y tambien otro de merge sort
+}
 
-void bit2dec(List num) {
-    if (num.size() == 0)
-        return;
-
-    while (1) {
-
-    }
+int bit2dec(List num) {
+    int dec = 0;
+    while (!num.empty()) {
+        dec *=2;
+        dec = dec + num.popfront();
+        }
+    return dec;
 };
 
+List merge(List& l1, List& l2) {
+    List result;
+    while (!l1.empty() && !l2.empty()) {
+        if (l1.front() <= l2.front()) {
+            result.pushback(l1.popfront());
+        } else {
+            result.pushback(l2.popfront());
+        }
+    }
 
-int main()
-{
+    // Agregar elementos restantes de l1
+    while (!l1.empty()) {
+        result.pushback(l1.popfront());
+    }
+
+    // Agregar elementos restantes de l2
+    while (!l2.empty()) {
+        result.pushback(l2.popfront());
+    }
+
+    return result;
+}
+
+int main() {
     List Pruebas;
-    Pruebas.pushfront(9);
-    Pruebas.pushfront(7);
+    List Pruebas3;
+    List Combinado;
     Pruebas.pushfront(2);
     Pruebas.pushfront(1);
+    Pruebas.pushfront(4);
     Pruebas.pushfront(3);
-    Pruebas.pushfront(2);
-    Pruebas.pushfront(6);
     Pruebas.sort();
     Pruebas.display();
     cout << endl;
-    Pruebas.reverse();
-    Pruebas.display();
+    Pruebas3.pushfront(5);
+    Pruebas3.pushfront(8);
+    Pruebas3.pushfront(6);
+    Pruebas3.pushfront(7);
+    Pruebas3.sort();
+    Pruebas3.display();
+    cout << endl;
+    Combinado=merge(Pruebas3,Pruebas);
+    Combinado.display();
     return 0;
 }
